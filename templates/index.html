@@ -1,0 +1,732 @@
+<!DOCTYPE html>
+<html data-theme="light">
+<head>
+    <title>NAVIGO – Smart Transport</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;700&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --primary: #d84e55;
+            --primary-dark: #b03a40;
+            --accent: #f857a6;
+            --bg: #f7f7f5;
+            --surface: #ffffff;
+            --surface2: #f9f9f9;
+            --text: #1a1a1a;
+            --text-muted: #777;
+            --border: #e8e8e8;
+            --shadow: 0 4px 20px rgba(0,0,0,0.08);
+            --shadow-hover: 0 8px 30px rgba(216,78,85,0.18);
+            --radius: 16px;
+            --transition: 0.25s cubic-bezier(.4,0,.2,1);
+        }
+
+        [data-theme="dark"] {
+            --bg: #0f0f12;
+            --surface: #1a1a22;
+            --surface2: #22222e;
+            --text: #f0f0f0;
+            --text-muted: #888;
+            --border: #2e2e3e;
+            --shadow: 0 4px 20px rgba(0,0,0,0.4);
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            transition: background var(--transition), color var(--transition);
+        }
+
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(22px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes pulse {
+            0%,100% { opacity: 1; }
+            50%      { opacity: 0.5; }
+        }
+        @keyframes slideIn {
+            from { transform: translateX(110%); opacity: 0; }
+            to   { transform: translateX(0);    opacity: 1; }
+        }
+        @keyframes slideOut {
+            from { transform: translateX(0);    opacity: 1; }
+            to   { transform: translateX(110%); opacity: 0; }
+        }
+
+        .fade-up { animation: fadeUp 0.55s ease both; }
+        .delay-1 { animation-delay: 0.08s; }
+        .delay-2 { animation-delay: 0.16s; }
+        .delay-3 { animation-delay: 0.24s; }
+        .delay-4 { animation-delay: 0.32s; }
+
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 14px 28px;
+            background: var(--surface);
+            box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .logo {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 22px;
+            font-weight: 700;
+            color: var(--primary);
+            letter-spacing: -0.5px;
+        }
+        .logo span { color: var(--text); }
+
+        .nav-right { display: flex; gap: 10px; align-items: center; }
+
+        .nav-btn {
+            padding: 7px 16px;
+            border-radius: 30px;
+            border: 1.5px solid var(--primary);
+            color: var(--primary);
+            cursor: pointer;
+            font-size: 12px;
+            font-family: 'Poppins', sans-serif;
+            font-weight: 500;
+            background: transparent;
+            transition: var(--transition);
+        }
+        .nav-btn:hover, .nav-btn.filled {
+            background: var(--primary);
+            color: white;
+        }
+
+        .theme-toggle {
+            background: var(--surface2);
+            border: 1.5px solid var(--border);
+            border-radius: 30px;
+            padding: 6px 12px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: var(--transition);
+            display: flex; align-items: center;
+        }
+        .theme-toggle:hover { border-color: var(--primary); }
+
+        .services {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            padding: 16px 20px;
+            background: var(--surface);
+            border-bottom: 1px solid var(--border);
+            overflow-x: auto;
+        }
+
+        .service {
+            text-align: center;
+            font-size: 11px;
+            font-weight: 500;
+            cursor: pointer;
+            padding: 10px 18px;
+            border-radius: 40px;
+            transition: var(--transition);
+            border: 1.5px solid var(--border);
+            color: var(--text-muted);
+            white-space: nowrap;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            background: var(--surface);
+        }
+        .service.active {
+            background: #ffe5e7;
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+        [data-theme="dark"] .service.active { background: rgba(216,78,85,0.15); }
+        .service img { width: 22px; }
+        .service:hover { transform: translateY(-2px); box-shadow: var(--shadow-hover); }
+
+        .hero {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            color: white;
+            text-align: center;
+            padding: 60px 20px 80px;
+            position: relative;
+            overflow: hidden;
+        }
+        .hero::before {
+            content: "NAVIGO";
+            position: absolute;
+            font-size: 160px;
+            font-family: 'Space Grotesk', sans-serif;
+            font-weight: 700;
+            color: rgba(255,255,255,0.04);
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            white-space: nowrap;
+            pointer-events: none;
+        }
+        .hero::after {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background-image: radial-gradient(circle, rgba(216,78,85,0.15) 1px, transparent 1px);
+            background-size: 36px 36px;
+            pointer-events: none;
+        }
+        .hero-tag {
+            display: inline-block;
+            background: rgba(216,78,85,0.3);
+            border: 1px solid rgba(216,78,85,0.6);
+            color: #ffb3b6;
+            font-size: 11px;
+            font-weight: 600;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            padding: 5px 14px;
+            border-radius: 30px;
+            margin-bottom: 16px;
+        }
+        .hero h1 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: clamp(28px, 5vw, 48px);
+            font-weight: 700;
+            letter-spacing: -1px;
+            line-height: 1.15;
+            margin-bottom: 12px;
+            position: relative; z-index: 1;
+        }
+        .hero p {
+            color: rgba(255,255,255,0.6);
+            font-size: 14px;
+            max-width: 380px;
+            margin: 0 auto;
+            position: relative; z-index: 1;
+        }
+
+        .container {
+            background: var(--surface);
+            width: 92%;
+            max-width: 480px;
+            margin: -30px auto 20px;
+            border-radius: var(--radius);
+            padding: 24px;
+            box-shadow: var(--shadow);
+            position: relative;
+            z-index: 2;
+        }
+
+        .input-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            border: 1.5px solid var(--border);
+            border-radius: 10px;
+            padding: 10px 14px;
+            margin-bottom: 10px;
+            background: var(--surface2);
+            transition: var(--transition);
+        }
+        .input-group:focus-within {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(216,78,85,0.1);
+        }
+        .input-group span { font-size: 16px; flex-shrink: 0; }
+        .input-group input {
+            border: none;
+            background: transparent;
+            font-family: 'Poppins', sans-serif;
+            font-size: 13px;
+            color: var(--text);
+            width: 100%;
+            outline: none;
+            padding: 0;
+        }
+        .input-group input::placeholder { color: var(--text-muted); }
+
+        .date-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+
+        .search-btn {
+            width: 100%;
+            padding: 14px;
+            border-radius: 40px;
+            background: linear-gradient(90deg, #d84e55, #f857a6);
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-family: 'Poppins', sans-serif;
+            font-weight: 600;
+            font-size: 14px;
+            transition: var(--transition);
+            letter-spacing: 0.3px;
+        }
+        .search-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(216,78,85,0.4);
+        }
+
+        .ai-banner {
+            background: linear-gradient(90deg, rgba(216,78,85,0.1), rgba(248,87,166,0.08));
+            border: 1px solid rgba(216,78,85,0.25);
+            border-radius: 10px;
+            padding: 10px 14px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 12px;
+            color: var(--text-muted);
+            margin-bottom: 14px;
+        }
+        .ai-banner strong { color: var(--primary); }
+        .ai-dot {
+            width: 8px; height: 8px;
+            background: var(--primary);
+            border-radius: 50%;
+            animation: pulse 1.6s infinite;
+            flex-shrink: 0;
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 20px 10px;
+            width: 92%;
+            max-width: 480px;
+            margin: 0 auto;
+        }
+        .section-header h2 { font-size: 16px; font-weight: 600; }
+        .section-header span { font-size: 12px; color: var(--text-muted); cursor: pointer; }
+        .section-header span:hover { color: var(--primary); }
+
+        .rides-section {
+            width: 92%;
+            max-width: 480px;
+            margin: 0 auto 24px;
+        }
+
+        .ride-card {
+            background: var(--surface);
+            padding: 16px 18px;
+            margin: 10px 0;
+            border-radius: var(--radius);
+            cursor: pointer;
+            transition: var(--transition);
+            border: 1.5px solid var(--border);
+            position: relative;
+            overflow: hidden;
+        }
+        .ride-card::before {
+            content: "";
+            position: absolute;
+            left: 0; top: 0; bottom: 0;
+            width: 4px;
+            background: linear-gradient(to bottom, var(--primary), var(--accent));
+            border-radius: 4px 0 0 4px;
+            opacity: 0;
+            transition: var(--transition);
+        }
+        .ride-card:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-hover);
+            border-color: rgba(216,78,85,0.3);
+        }
+        .ride-card:hover::before { opacity: 1; }
+
+        .best-badge {
+            position: absolute;
+            top: 12px; right: 14px;
+            background: linear-gradient(90deg, #d84e55, #f857a6);
+            color: white;
+            font-size: 9px;
+            font-weight: 700;
+            letter-spacing: 0.8px;
+            text-transform: uppercase;
+            padding: 3px 9px;
+            border-radius: 20px;
+        }
+
+        .ride-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 10px;
+        }
+        .ride-name {
+            font-size: 14px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            flex-wrap: wrap;
+        }
+        .ride-price {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--primary);
+        }
+        .ride-price sub { font-size: 11px; font-weight: 400; color: var(--text-muted); }
+
+        .ai-tag {
+            background: var(--primary);
+            color: white;
+            font-size: 9px;
+            font-weight: 700;
+            padding: 2px 7px;
+            border-radius: 5px;
+            letter-spacing: 0.5px;
+        }
+
+        .ride-meta {
+            display: flex;
+            gap: 16px;
+            font-size: 11px;
+            color: var(--text-muted);
+            margin-bottom: 10px;
+        }
+        .ride-meta span { display: flex; align-items: center; gap: 4px; }
+
+        .stars { color: #f5a623; font-size: 12px; }
+
+        .demand-row {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 10px;
+            color: var(--text-muted);
+        }
+        .demand-bar-bg {
+            flex: 1;
+            height: 5px;
+            background: var(--border);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        .demand-bar-fill {
+            height: 100%;
+            border-radius: 10px;
+            background: linear-gradient(90deg, #4cd964, #f5a623, #d84e55);
+        }
+
+        .book-btn {
+            margin-top: 12px;
+            width: 100%;
+            padding: 10px;
+            border-radius: 30px;
+            border: 1.5px solid var(--primary);
+            background: transparent;
+            color: var(--primary);
+            font-family: 'Poppins', sans-serif;
+            font-weight: 600;
+            font-size: 12px;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+        .book-btn:hover { background: var(--primary); color: white; }
+
+        .routes-section {
+            width: 92%;
+            max-width: 480px;
+            margin: 0 auto 24px;
+        }
+        .card {
+            background: var(--surface);
+            padding: 14px 18px;
+            margin: 8px 0;
+            border-radius: 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border: 1.5px solid var(--border);
+            font-size: 13px;
+        }
+        .card .demand-label {
+            background: rgba(216,78,85,0.12);
+            color: var(--primary);
+            font-size: 11px;
+            font-weight: 600;
+            padding: 3px 10px;
+            border-radius: 20px;
+        }
+
+        .stats-strip {
+            background: var(--surface);
+            border-top: 1px solid var(--border);
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-around;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        .stat { text-align: center; }
+        .stat-num {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--primary);
+        }
+        .stat-label { font-size: 11px; color: var(--text-muted); margin-top: 2px; }
+
+        .toast {
+            position: fixed;
+            bottom: 30px;
+            right: 20px;
+            background: #1a1a2e;
+            color: white;
+            padding: 14px 20px;
+            border-radius: 12px;
+            font-size: 13px;
+            font-weight: 500;
+            z-index: 999;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.3);
+            animation: slideIn 0.4s ease;
+            border-left: 4px solid var(--primary);
+        }
+        .toast.hide { animation: slideOut 0.4s ease forwards; }
+        .toast-icon { font-size: 20px; }
+
+        .footer {
+            background: #0f0f12;
+            color: rgba(255,255,255,0.7);
+            padding: 40px 28px 24px;
+            margin-top: 20px;
+        }
+        .footer-top {
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 20px;
+            margin-bottom: 28px;
+        }
+        .footer-brand p { font-size: 12px; color: rgba(255,255,255,0.4); margin-top: 6px; max-width: 200px; }
+        .footer-links h4 { font-size: 12px; font-weight: 600; color: white; margin-bottom: 10px; letter-spacing: 1px; text-transform: uppercase; }
+        .footer-links a { display: block; font-size: 12px; color: rgba(255,255,255,0.45); margin-bottom: 6px; text-decoration: none; transition: var(--transition); }
+        .footer-links a:hover { color: var(--primary); }
+        .footer-divider { border: none; border-top: 1px solid rgba(255,255,255,0.08); margin-bottom: 16px; }
+        .footer-bottom { display: flex; justify-content: space-between; font-size: 11px; color: rgba(255,255,255,0.3); flex-wrap: wrap; gap: 8px; }
+
+        @media (max-width: 480px) {
+            .navbar { padding: 12px 16px; }
+            .hero { padding: 50px 16px 70px; }
+            .date-row { grid-template-columns: 1fr; }
+            .footer-top { flex-direction: column; }
+        }
+    </style>
+</head>
+
+<body>
+
+<nav class="navbar fade-up">
+    <div class="logo">NAV<span>IGO</span></div>
+    <div class="nav-right">
+        <button class="theme-toggle" onclick="toggleTheme()" id="themeBtn">🌙</button>
+        <button class="nav-btn" onclick="window.location.href='/bookings'">Bookings</button>
+        <button class="nav-btn" onclick="window.location.href='/login'">Login</button>
+        <button class="nav-btn filled" onclick="window.location.href='/login'">Sign Up</button>
+    </div>
+</nav>
+
+<div class="services fade-up delay-1">
+    <div class="service active" onclick="filterRides('all', this)">
+        <img src="https://img.icons8.com/ios-filled/50/d84e55/bus.png"/> Bus
+    </div>
+    <div class="service" onclick="filterRides('train', this)">
+        <img src="https://img.icons8.com/ios-filled/50/d84e55/train.png"/> Train
+    </div>
+    <div class="service" onclick="filterRides('taxi', this)">
+        <img src="https://img.icons8.com/ios-filled/50/d84e55/taxi.png"/> Taxi
+    </div>
+    <div class="service" onclick="filterRides('cab', this)">
+        <img src="https://img.icons8.com/ios-filled/50/d84e55/car.png"/> Cab
+    </div>
+    <div class="service" onclick="filterRides('metro', this)">
+        <img src="https://img.icons8.com/ios-filled/50/d84e55/metro.png"/> Metro
+    </div>
+</div>
+
+<div class="hero">
+    <div class="hero-tag fade-up delay-1">✦ AI-Powered Transport</div>
+    <h1 class="fade-up delay-2">Smart travel,<br>smarter routes.</h1>
+    <p class="fade-up delay-3">NAVIGO uses real-time demand prediction to find you the best ride, every time.</p>
+</div>
+
+<div class="container fade-up delay-2">
+    <div class="ai-banner">
+        <div class="ai-dot"></div>
+        <div>AI detected <strong>high demand</strong> on Delhi → Agra today. Book early for best prices.</div>
+    </div>
+    <div class="input-group">
+        <span>📍</span>
+        <input id="fromInput" placeholder="From (e.g. Delhi)">
+    </div>
+    <div class="input-group">
+        <span>🏁</span>
+        <input id="toInput" placeholder="To (e.g. Agra)">
+    </div>
+    <div class="date-row">
+        <div class="input-group" style="margin:0">
+            <span>📅</span>
+            <input type="date" id="dateInput">
+        </div>
+        <div class="input-group" style="margin:0">
+            <span>🕐</span>
+            <input type="time" id="timeInput">
+        </div>
+    </div>
+    <br>
+    <button class="search-btn" onclick="searchRides()">🔍 &nbsp; Search Rides</button>
+</div>
+
+<div class="stats-strip fade-up delay-3">
+    <div class="stat">
+        <div class="stat-num">1,240+</div>
+        <div class="stat-label">Routes Available</div>
+    </div>
+    <div class="stat">
+        <div class="stat-num">98%</div>
+        <div class="stat-label">On-Time Rate</div>
+    </div>
+    <div class="stat">
+        <div class="stat-num">4.8★</div>
+        <div class="stat-label">Average Rating</div>
+    </div>
+    <div class="stat">
+        <div class="stat-num">24/7</div>
+        <div class="stat-label">AI Support</div>
+    </div>
+</div>
+
+<div class="routes-section fade-up delay-3">
+    {% for route in routes %}
+    <div class="card">
+        <div>{{ route[1] }}</div>
+        <div class="demand-label">Demand: {{ predictions[route[0]] }}</div>
+    </div>
+    {% endfor %}
+</div>
+
+<div class="section-header fade-up delay-3">
+    <h2>Available Rides</h2>
+    <span onclick="document.getElementById('rides').scrollIntoView({behavior:'smooth'})">View all →</span>
+</div>
+
+<div class="rides-section fade-up delay-4" id="rides">
+
+    <div class="ride-card bus">
+        <div class="best-badge">⚡ Best Value</div>
+        <div class="ride-top">
+            <div class="ride-name">🚌 Volvo AC Sleeper <span class="ai-tag">AI</span></div>
+            <div class="ride-price">₹<span id="p1"></span><sub>/person</sub></div>
+        </div>
+        <div class="ride-meta">
+            <span>⏱ 6h 30m</span>
+            <span>💺 34 seats left</span>
+            <span class="stars">★★★★☆</span>
+            <span>4.2</span>
+        </div>
+        <div class="demand-row">
+            <span>Demand</span>
+            <div class="demand-bar-bg"><div class="demand-bar-fill" style="width:72%"></div></div>
+            <span>High</span>
+        </div>
+        <button class="book-btn" onclick="bookRide('Volvo AC Sleeper')">Book Now</button>
+    </div>
+
+    <div class="ride-card train">
+        <div class="ride-top">
+            <div class="ride-name">🚆 Express Train <span class="ai-tag">AI</span></div>
+            <div class="ride-price">₹<span id="p2"></span><sub>/person</sub></div>
+        </div>
+        <div class="ride-meta">
+            <span>⏱ 4h 10m</span>
+            <span>💺 112 seats left</span>
+            <span class="stars">★★★★★</span>
+            <span>4.8</span>
+        </div>
+        <div class="demand-row">
+            <span>Demand</span>
+            <div class="demand-bar-bg"><div class="demand-bar-fill" style="width:45%"></div></div>
+            <span>Medium</span>
+        </div>
+        <button class="book-btn" onclick="bookRide('Express Train')">Book Now</button>
+    </div>
+
+    <div class="ride-card cab taxi">
+        <div class="ride-top">
+            <div class="ride-name">🚕 Cab Sedan <span class="ai-tag">AI</span></div>
+            <div class="ride-price">₹<span id="p3"></span><sub>/ride</sub></div>
+        </div>
+        <div class="ride-meta">
+            <span>⏱ 5h 45m</span>
+            <span>💺 4 seats</span>
+            <span class="stars">★★★★☆</span>
+            <span>4.0</span>
+        </div>
+        <div class="demand-row">
+            <span>Demand</span>
+            <div class="demand-bar-bg"><div class="demand-bar-fill" style="width:88%"></div></div>
+            <span>Very High</span>
+        </div>
+        <button class="book-btn" onclick="bookRide('Cab Sedan')">Book Now</button>
+    </div>
+
+    <div class="ride-card metro">
+        <div class="ride-top">
+            <div class="ride-name">🚇 Metro Line <span class="ai-tag">AI</span></div>
+            <div class="ride-price">₹<span id="p4"></span><sub>/person</sub></div>
+        </div>
+        <div class="ride-meta">
+            <span>⏱ 38m</span>
+            <span>💺 Unlimited</span>
+            <span class="stars">★★★★★</span>
+            <span>4.9</span>
+        </div>
+        <div class="demand-row">
+            <span>Demand</span>
+            <div class="demand-bar-bg"><div class="demand-bar-fill" style="width:30%"></div></div>
+            <span>Low</span>
+        </div>
+        <button class="book-btn" onclick="bookRide('Metro Line')">Book Now</button>
+    </div>
+
+</div>
+
+<div class="toast" id="toast" style="display:none">
+    <span class="toast-icon">✅</span>
+    <span id="toastMsg">Redirecting to booking...</span>
+</div>
+
+<footer class="footer">
+    <div class="footer-top">
+        <div class="footer-brand">
+            <div class="logo" style="color:#d84e55">NAV<span style="color:white">IGO</span></div>
+            <p>AI-powered smart transport booking for a seamless journey experience.</p>
+        </div>
+        <div class="footer-links">
+            <h4>Services</h4>
+            <a href="#">Bus Booking</a>
+            <a href="#">Train Tickets</a>
+            <a href="#">Cab Rental</a>
+            <a href="#">Metro Pass</a>
+        </div>
+        <div class="footer-links">
+            <h4>Company</h4>
+            <a href="#">About Us</a>
+            <a href="#">Contact</a>
+            <a href="#">Privacy Policy</a>
+            <a href="#">Terms</a>
+        </div>

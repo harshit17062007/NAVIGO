@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Dashboard</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+
+<h1>📊 Transport Dashboard</h1>
+
+<canvas id="myChart"></canvas>
+
+<script>
+const labels = [
+{% for d in data %}
+"{{ d[0] }}"{% if not loop.last %},{% endif %}
+{% endfor %}
+];
+
+const values = [
+{% for d in data %}
+{{ d[1] }}{% if not loop.last %},{% endif %}
+{% endfor %}
+];
+
+const ctx = document.getElementById('myChart').getContext('2d');
+
+new Chart(ctx, {
+    type: 'bar',
+    data: {
+        labels: labels,
+        datasets: [{
+            label: 'Passenger Demand',
+            data: values,
+            backgroundColor: 'rgba(216, 78, 85, 0.6)'
+        }]
+    }
+});
+</script>
+
+<a href="/">Back</a>
+
+</body>
+</html>

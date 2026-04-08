@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html data-theme="light">
+<head>
+    <title>NAVIGO – Login</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #d84e55;
+            --accent: #f857a6;
+            --bg: #f7f7f5;
+            --surface: #ffffff;
+            --surface2: #f9f9f9;
+            --text: #1a1a1a;
+            --text-muted: #777;
+            --border: #e8e8e8;
+            --shadow: 0 4px 20px rgba(0,0,0,0.08);
+            --radius: 16px;
+            --transition: 0.25s cubic-bezier(.4,0,.2,1);
+        }
+        [data-theme="dark"] {
+            --bg: #0f0f12;
+            --surface: #1a1a22;
+            --surface2: #22222e;
+            --text: #f0f0f0;
+            --text-muted: #888;
+            --border: #2e2e3e;
+            --shadow: 0 4px 20px rgba(0,0,0,0.4);
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            transition: background var(--transition), color var(--transition);
+        }
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 14px 28px;
+            background: var(--surface);
+            box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+        }
+        .logo {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 22px;
+            font-weight: 700;
+            color: var(--primary);
+            text-decoration: none;
+        }
+        .logo span { color: var(--text); }
+        .theme-toggle {
+            background: var(--surface2);
+            border: 1.5px solid var(--border);
+            border-radius: 30px;
+            padding: 6px 12px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: var(--transition);
+        }
+        .theme-toggle:hover { border-color: var(--primary); }
+        .main {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 40px 20px;
+        }
+        .auth-wrapper {
+            display: flex;
+            width: 100%;
+            max-width: 900px;
+            border-radius: 24px;
+            overflow: hidden;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.12);
+            animation: fadeUp 0.6s ease both;
+        }
+        .auth-left {
+            flex: 1;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            padding: 50px 40px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+        .auth-left::before {
+            content: "NAVIGO";
+            position: absolute;
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 120px;
+            font-weight: 700;
+            color: rgba(255,255,255,0.04);
+            bottom: -10px;
+            left: -10px;
+            line-height: 1;
+        }
+        .auth-left::after {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background-image: radial-gradient(circle, rgba(216,78,85,0.12) 1px, transparent 1px);
+            background-size: 30px 30px;
+        }
+        .auth-left-content { position: relative; z-index: 1; }
+        .auth-left h2 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 32px;
+            font-weight: 700;
+            color: white;
+            margin-bottom: 12px;
+            line-height: 1.2;
+        }
+        .auth-left p {
+            color: rgba(255,255,255,0.5);
+            font-size: 13px;
+            line-height: 1.7;
+            margin-bottom: 30px;
+        }
+        .feature-list { list-style: none; }
+        .feature-list li {
+            color: rgba(255,255,255,0.7);
+            font-size: 13px;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .feature-list li .icon {
+            width: 28px; height: 28px;
+            background: rgba(216,78,85,0.25);
+            border-radius: 8px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 14px;
+            flex-shrink: 0;
+        }
+        .auth-right {
+            flex: 1;
+            background: var(--surface);
+            padding: 50px 40px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+        .auth-right h3 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 6px;
+        }
+        .auth-right .subtitle {
+            font-size: 13px;
+            color: var(--text-muted);
+            margin-bottom: 28px;
+        }
+        .auth-right .subtitle a {
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 600;
+        }
+        .input-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            border: 1.5px solid var(--border);
+            border-radius: 12px;
+            padding: 12px 16px;
+            margin-bottom: 14px;
+            background: var(--surface2);
+            transition: var(--transition);
+        }
+        .input-group:focus-within {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(216,78,85,0.1);
+        }
+        .input-group span { font-size: 18px; flex-shrink: 0; }
+        .input-group input {
+            border: none;
+            background: transparent;
+            font-family: 'Poppins', sans-serif;
+            font-size: 13px;
+            color: var(--text);
+            width: 100%;
+            outline: none;
+        }
+        .input-group input::placeholder { color: var(--text-muted); }
+        .forgot {
+            text-align: right;
+            font-size: 12px;
+            margin-bottom: 20px;
+        }
+        .forgot a { color: var(--primary); text-decoration: none; }
+        .auth-btn {
+            width: 100%;
+            padding: 14px;
+            border-radius: 40px;
+            background: linear-gradient(90deg, #d84e55, #f857a6);
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-family: 'Poppins', sans-serif;
+            font-weight: 600;
+            font-size: 14px;
+            transition: var(--transition);
+            letter-spacing: 0.3px;
+            margin-bottom: 20px;
+        }
+        .auth-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(216,78,85,0.4);
+        }
+        .divider {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 12px;
+            color: var(--text-muted);
+            margin-bottom: 20px;
+        }
+        .divider::before, .divider::after {
+            content: "";
+            flex: 1;
+            height: 1px;
+            background: var(--border);
+        }
+        .social-btn {
+            width: 100%;
+            padding: 12px;
+            border-radius: 12px;
+            border: 1.5px solid var(--border);
+            background: var(--surface);
+            color: var(--text);
+            font-family: 'Poppins', sans-serif;
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            transition: var(--transition);
+            margin-bottom: 10px;
+        }
+        .social-btn:hover { border-color: var(--primary); background: var(--surface2); }
+        .error-msg {
+            background: rgba(216,78,85,0.1);
+            border: 1px solid rgba(216,78,85,0.3);
+            color: var(--primary);
+            font-size: 12px;
+            padding: 10px 14px;
+            border-radius: 10px;
+            margin-bottom: 14px;
+            display: none;
+        }
+        @media (max-width: 640px) {
+            .auth-left { display: none; }
+            .auth-wrapper { border-radius: 16px; }
+            .auth-right { padding: 36px 24px; }
+        }
+    </style>
+</head>
+<body>
+<nav class="navbar">
+    <a href="/" class="logo">NAV<span>IGO</span></a>
+    <button class="theme-toggle" onclick="toggleTheme()" id="themeBtn">🌙</button>
+</nav>
+<div class="main">
+    <div class="auth-wrapper">
+        <div class="auth-left">
+            <div class="auth-left-content">
+                <h2>Welcome back to NAVIGO</h2>
+                <p>Your smart transport companion. Book rides, track routes, and travel smarter every day.</p>
+                <ul class="feature-list">
+                    <li><div class="icon">🤖</div> AI-powered demand prediction</li>
+                    <li><div class="icon">📍</div> Real-time route tracking</li>
+                    <li><div class="icon">💺</div> Instant seat booking</li>
+                    <li><div class="icon">🎟️</div> Digital tickets & receipts</li>
+                </ul>
+            </div>
+        </div>
+        <div class="auth-right">
+            <h3>Sign in</h3>
+            <p class="subtitle">Don't have an account? <a href="/signup">Sign up free</a></p>
+            <div class="error-msg" id="errorMsg">❌ Please fill in all fields.</div>
+            <form method="POST" action="/login" onsubmit="return validate()">
+                <div class="input-group">
+                    <span>👤</span>
+                    <input name="username" id="username" placeholder="Username or Email" required>
+                </div>
+                <div class="input-group">
+                    <span>🔒</span>
+                    <input type="password" name="password" id="password" placeholder="Password" required>
+                </div>
+                <div class="forgot"><a href="#">Forgot password?</a></div>
+                <button type="submit" class="auth-btn">Sign In →</button>
+            </form>
+            <div class="divider">or continue with</div>
+            <button class="social-btn">🌐 &nbsp; Continue with Google</button>
+            <button class="social-btn">📱 &nbsp; Continue with Phone</button>
+        </div>
+    </div>
+</div>
+<script>
+    function validate() {
+        const u = document.getElementById("username").value.trim();
+        const p = document.getElementById("password").value.trim();
+        if (!u || !p) {
+            document.getElementById("errorMsg").style.display = "block";
+            return false;
+        }
+        return true;
+    }
+    function toggleTheme() {
+        const html = document.documentElement;
+        const isDark = html.getAttribute("data-theme") === "dark";
+        html.setAttribute("data-theme", isDark ? "light" : "dark");
+        document.getElementById("themeBtn").innerText = isDark ? "🌙" : "☀️";
+        localStorage.setItem("navigo-theme", isDark ? "light" : "dark");
+    }
+    const saved = localStorage.getItem("navigo-theme");
+    if (saved === "dark") {
+        document.documentElement.setAttribute("data-theme", "dark");
+        document.getElementById("themeBtn").innerText = "☀️";
+    }
+</script>
+</body>
+</html>

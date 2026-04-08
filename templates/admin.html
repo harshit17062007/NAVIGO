@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Admin Panel</title>
+</head>
+<body>
+
+<h1>Admin Panel</h1>
+
+<form method="POST">
+    <input type="text" name="name" placeholder="Route Name">
+    <button type="submit">Add Route</button>
+</form>
+
+<h2>Routes</h2>
+
+{% for route in routes %}
+    <p>{{ route[1] }}</p>
+{% endfor %}
+
+<a href="/">Back</a>
+
+</body>
+</html>

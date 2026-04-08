@@ -1,0 +1,625 @@
+<!DOCTYPE html>
+<html data-theme="light">
+<head>
+    <title>NAVIGO – Book Ride</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #d84e55;
+            --accent: #f857a6;
+            --bg: #f7f7f5;
+            --surface: #ffffff;
+            --surface2: #f9f9f9;
+            --text: #1a1a1a;
+            --text-muted: #777;
+            --border: #e8e8e8;
+            --shadow: 0 4px 20px rgba(0,0,0,0.08);
+            --radius: 16px;
+            --transition: 0.25s cubic-bezier(.4,0,.2,1);
+        }
+        [data-theme="dark"] {
+            --bg: #0f0f12;
+            --surface: #1a1a22;
+            --surface2: #22222e;
+            --text: #f0f0f0;
+            --text-muted: #888;
+            --border: #2e2e3e;
+            --shadow: 0 4px 20px rgba(0,0,0,0.4);
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            transition: background var(--transition), color var(--transition);
+        }
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(18px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes checkPop {
+            0%   { transform: scale(0); opacity: 0; }
+            70%  { transform: scale(1.2); }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 14px 28px;
+            background: var(--surface);
+            box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+            position: sticky; top: 0; z-index: 50;
+        }
+        .logo {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 22px;
+            font-weight: 700;
+            color: var(--primary);
+            text-decoration: none;
+        }
+        .logo span { color: var(--text); }
+        .nav-right { display: flex; gap: 10px; align-items: center; }
+        .nav-btn {
+            padding: 7px 16px;
+            border-radius: 30px;
+            border: 1.5px solid var(--primary);
+            color: var(--primary);
+            cursor: pointer;
+            font-size: 12px;
+            font-family: 'Poppins', sans-serif;
+            font-weight: 500;
+            background: transparent;
+            transition: var(--transition);
+        }
+        .nav-btn:hover { background: var(--primary); color: white; }
+        .theme-toggle {
+            background: var(--surface2);
+            border: 1.5px solid var(--border);
+            border-radius: 30px;
+            padding: 6px 12px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: var(--transition);
+        }
+        .theme-toggle:hover { border-color: var(--primary); }
+        .progress-bar {
+            background: var(--surface);
+            border-bottom: 1px solid var(--border);
+            padding: 16px 28px;
+        }
+        .steps-row {
+            display: flex;
+            align-items: center;
+            max-width: 500px;
+            margin: 0 auto;
+        }
+        .step {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            flex: 1;
+        }
+        .step-circle {
+            width: 32px; height: 32px;
+            border-radius: 50%;
+            border: 2px solid var(--border);
+            background: var(--surface);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-muted);
+            transition: var(--transition);
+        }
+        .step.active .step-circle { background: var(--primary); border-color: var(--primary); color: white; }
+        .step.done .step-circle { background: #4cd964; border-color: #4cd964; color: white; }
+        .step-label { font-size: 10px; color: var(--text-muted); }
+        .step.active .step-label { color: var(--primary); font-weight: 600; }
+        .step-line { flex: 1; height: 2px; background: var(--border); margin: 0 6px; margin-bottom: 18px; transition: var(--transition); }
+        .step-line.done { background: #4cd964; }
+        .page {
+            max-width: 900px;
+            margin: 30px auto;
+            padding: 0 20px;
+            display: grid;
+            grid-template-columns: 1fr 340px;
+            gap: 24px;
+            animation: fadeUp 0.5s ease both;
+        }
+        .card {
+            background: var(--surface);
+            border-radius: var(--radius);
+            padding: 24px;
+            border: 1.5px solid var(--border);
+            margin-bottom: 20px;
+        }
+        .card-title {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 16px;
+            font-weight: 700;
+            margin-bottom: 18px;
+        }
+        .ride-summary {
+            background: linear-gradient(135deg, #1a1a2e, #16213e);
+            border-radius: var(--radius);
+            padding: 20px 24px;
+            color: white;
+            margin-bottom: 20px;
+            position: relative;
+            overflow: hidden;
+        }
+        .ride-summary::after {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background-image: radial-gradient(circle, rgba(216,78,85,0.1) 1px, transparent 1px);
+            background-size: 28px 28px;
+        }
+        .ride-summary-content { position: relative; z-index: 1; }
+        .ride-name-big {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+        .ride-meta-row {
+            display: flex;
+            gap: 20px;
+            font-size: 12px;
+            color: rgba(255,255,255,0.6);
+            flex-wrap: wrap;
+        }
+        .ai-badge {
+            display: inline-block;
+            background: rgba(216,78,85,0.4);
+            border: 1px solid rgba(216,78,85,0.6);
+            color: #ffb3b6;
+            font-size: 10px;
+            font-weight: 700;
+            padding: 2px 9px;
+            border-radius: 20px;
+            margin-left: 8px;
+        }
+        .input-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            border: 1.5px solid var(--border);
+            border-radius: 12px;
+            padding: 11px 14px;
+            margin-bottom: 12px;
+            background: var(--surface2);
+            transition: var(--transition);
+        }
+        .input-group:focus-within {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(216,78,85,0.1);
+        }
+        .input-group span { font-size: 16px; flex-shrink: 0; }
+        .input-group input, .input-group select {
+            border: none;
+            background: transparent;
+            font-family: 'Poppins', sans-serif;
+            font-size: 13px;
+            color: var(--text);
+            width: 100%;
+            outline: none;
+        }
+        .input-group input::placeholder { color: var(--text-muted); }
+        .input-group select option { background: var(--surface); }
+        .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+        .seat-grid {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            gap: 8px;
+            margin-top: 8px;
+        }
+        .seat {
+            aspect-ratio: 1;
+            border-radius: 8px;
+            border: 1.5px solid var(--border);
+            background: var(--surface2);
+            cursor: pointer;
+            font-size: 11px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            transition: var(--transition);
+            color: var(--text-muted);
+        }
+        .seat:hover:not(.taken) { border-color: var(--primary); color: var(--primary); }
+        .seat.selected { background: var(--primary); border-color: var(--primary); color: white; }
+        .seat.taken { background: var(--border); cursor: not-allowed; opacity: 0.5; }
+        .seat-legend {
+            display: flex;
+            gap: 16px;
+            font-size: 11px;
+            color: var(--text-muted);
+            margin-top: 12px;
+        }
+        .seat-legend span { display: flex; align-items: center; gap: 5px; }
+        .legend-dot { width: 12px; height: 12px; border-radius: 3px; }
+        .sidebar { position: sticky; top: 80px; }
+        .summary-card {
+            background: var(--surface);
+            border-radius: var(--radius);
+            padding: 24px;
+            border: 1.5px solid var(--border);
+        }
+        .summary-title {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 15px;
+            font-weight: 700;
+            margin-bottom: 16px;
+        }
+        .summary-row {
+            display: flex;
+            justify-content: space-between;
+            font-size: 13px;
+            margin-bottom: 10px;
+            color: var(--text-muted);
+        }
+        .summary-row strong { color: var(--text); }
+        .summary-divider { border: none; border-top: 1px solid var(--border); margin: 14px 0; }
+        .summary-total {
+            display: flex;
+            justify-content: space-between;
+            font-size: 16px;
+            font-weight: 700;
+        }
+        .summary-total span:last-child { color: var(--primary); }
+        .promo-row { display: flex; gap: 8px; margin: 14px 0; }
+        .promo-row input {
+            flex: 1;
+            border: 1.5px solid var(--border);
+            border-radius: 10px;
+            padding: 9px 12px;
+            background: var(--surface2);
+            font-family: 'Poppins', sans-serif;
+            font-size: 12px;
+            color: var(--text);
+            outline: none;
+            transition: var(--transition);
+        }
+        .promo-row input:focus { border-color: var(--primary); }
+        .promo-btn {
+            padding: 9px 14px;
+            border-radius: 10px;
+            border: none;
+            background: var(--primary);
+            color: white;
+            font-family: 'Poppins', sans-serif;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+        .book-btn {
+            width: 100%;
+            padding: 14px;
+            border-radius: 40px;
+            background: linear-gradient(90deg, #d84e55, #f857a6);
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-family: 'Poppins', sans-serif;
+            font-weight: 700;
+            font-size: 15px;
+            transition: var(--transition);
+            margin-top: 16px;
+        }
+        .book-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(216,78,85,0.4);
+        }
+        .secure-note {
+            text-align: center;
+            font-size: 11px;
+            color: var(--text-muted);
+            margin-top: 10px;
+        }
+        .success-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.6);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 999;
+            backdrop-filter: blur(4px);
+        }
+        .success-overlay.show { display: flex; }
+        .success-box {
+            background: var(--surface);
+            border-radius: 24px;
+            padding: 48px 40px;
+            text-align: center;
+            max-width: 380px;
+            width: 90%;
+            animation: fadeUp 0.4s ease;
+        }
+        .success-icon {
+            font-size: 60px;
+            animation: checkPop 0.5s ease 0.2s both;
+            display: block;
+            margin-bottom: 16px;
+        }
+        .success-box h2 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 22px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+        .success-box p { font-size: 13px; color: var(--text-muted); margin-bottom: 24px; }
+        .pnr {
+            background: var(--surface2);
+            border: 1.5px dashed var(--border);
+            border-radius: 12px;
+            padding: 12px 20px;
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 22px;
+            font-weight: 700;
+            color: var(--primary);
+            letter-spacing: 4px;
+            margin-bottom: 24px;
+        }
+        .success-btns { display: flex; gap: 10px; }
+        .success-btns button {
+            flex: 1;
+            padding: 12px;
+            border-radius: 30px;
+            font-family: 'Poppins', sans-serif;
+            font-weight: 600;
+            font-size: 13px;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+        .btn-outline { border: 1.5px solid var(--border); background: transparent; color: var(--text); }
+        .btn-outline:hover { border-color: var(--primary); color: var(--primary); }
+        .btn-filled { border: none; background: linear-gradient(90deg, #d84e55, #f857a6); color: white; }
+        @media (max-width: 700px) {
+            .page { grid-template-columns: 1fr; }
+            .sidebar { position: static; }
+            .two-col { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+<nav class="navbar">
+    <a href="/" class="logo">NAV<span>IGO</span></a>
+    <div class="nav-right">
+        <button class="theme-toggle" onclick="toggleTheme()" id="themeBtn">🌙</button>
+        <button class="nav-btn" onclick="window.location.href='/'">← Back</button>
+    </div>
+</nav>
+
+<div class="progress-bar">
+    <div class="steps-row">
+        <div class="step done">
+            <div class="step-circle">✓</div>
+            <div class="step-label">Search</div>
+        </div>
+        <div class="step-line done"></div>
+        <div class="step active">
+            <div class="step-circle">2</div>
+            <div class="step-label">Details</div>
+        </div>
+        <div class="step-line"></div>
+        <div class="step">
+            <div class="step-circle">3</div>
+            <div class="step-label">Payment</div>
+        </div>
+        <div class="step-line"></div>
+        <div class="step">
+            <div class="step-circle">4</div>
+            <div class="step-label">Confirmed</div>
+        </div>
+    </div>
+</div>
+
+<div class="page">
+    <div>
+        <div class="ride-summary">
+            <div class="ride-summary-content">
+                <div class="ride-name-big" id="rideName">🚌 Volvo AC Sleeper <span class="ai-badge">AI</span></div>
+                <div class="ride-meta-row">
+                    <span>📍 Delhi → Agra</span>
+                    <span>⏱ 6h 30m</span>
+                    <span>📅 <span id="rideDate">Today</span></span>
+                    <span>⭐ 4.2 Rating</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-title">👤 Passenger Details</div>
+            <div class="two-col">
+                <div class="input-group" style="margin:0">
+                    <span>👤</span><input id="fname" placeholder="First Name">
+                </div>
+                <div class="input-group" style="margin:0">
+                    <span>👤</span><input id="lname" placeholder="Last Name">
+                </div>
+            </div>
+            <br>
+            <div class="input-group">
+                <span>📧</span><input type="email" id="email" placeholder="Email Address">
+            </div>
+            <div class="input-group">
+                <span>📱</span><input type="tel" id="phone" placeholder="Phone Number">
+            </div>
+            <div class="two-col">
+                <div class="input-group" style="margin:0">
+                    <span>🎂</span><input type="date" placeholder="Date of Birth">
+                </div>
+                <div class="input-group" style="margin:0">
+                    <span>🪪</span>
+                    <select>
+                        <option value="">ID Proof Type</option>
+                        <option>Aadhaar Card</option>
+                        <option>PAN Card</option>
+                        <option>Passport</option>
+                        <option>Driving Licence</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-title">💺 Select Your Seat</div>
+            <div class="seat-grid" id="seatGrid"></div>
+            <div class="seat-legend">
+                <span><div class="legend-dot" style="background:var(--surface2);border:1.5px solid var(--border)"></div> Available</span>
+                <span><div class="legend-dot" style="background:var(--primary)"></div> Selected</span>
+                <span><div class="legend-dot" style="background:var(--border)"></div> Taken</span>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-title">💳 Payment Method</div>
+            <div class="input-group">
+                <span>💳</span>
+                <select>
+                    <option>Credit / Debit Card</option>
+                    <option>UPI (GPay, PhonePe, Paytm)</option>
+                    <option>Net Banking</option>
+                    <option>NAVIGO Wallet</option>
+                    <option>Cash on Board</option>
+                </select>
+            </div>
+            <div class="input-group">
+                <span>🔢</span>
+                <input placeholder="Card Number (16 digits)" maxlength="19" oninput="formatCard(this)">
+            </div>
+            <div class="two-col">
+                <div class="input-group" style="margin:0">
+                    <span>📅</span><input placeholder="MM / YY" maxlength="5">
+                </div>
+                <div class="input-group" style="margin:0">
+                    <span>🔒</span><input type="password" placeholder="CVV" maxlength="3">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="sidebar">
+        <div class="summary-card">
+            <div class="summary-title">🧾 Order Summary</div>
+            <div class="summary-row"><span>Ride</span><strong id="summaryRide">Volvo AC Sleeper</strong></div>
+            <div class="summary-row"><span>Seat</span><strong id="summarySeat">Not selected</strong></div>
+            <div class="summary-row"><span>Base Fare</span><strong id="summaryBase">₹800</strong></div>
+            <div class="summary-row"><span>Taxes & Fees</span><strong id="summaryTax">₹72</strong></div>
+            <div class="summary-row" id="discountRow" style="display:none">
+                <span>Discount</span><strong id="summaryDiscount" style="color:#4cd964">-₹0</strong>
+            </div>
+            <div class="promo-row">
+                <input id="promoInput" placeholder="Promo code (try NAVIGO10)">
+                <button class="promo-btn" onclick="applyPromo()">Apply</button>
+            </div>
+            <hr class="summary-divider">
+            <div class="summary-total">
+                <span>Total</span><span id="summaryTotal">₹872</span>
+            </div>
+            <button class="book-btn" onclick="confirmBooking()">Confirm & Pay 🎟️</button>
+            <div class="secure-note">🔒 Secure payment · Instant e-ticket</div>
+        </div>
+    </div>
+</div>
+
+<div class="success-overlay" id="successOverlay">
+    <div class="success-box">
+        <span class="success-icon">🎉</span>
+        <h2>Booking Confirmed!</h2>
+        <p>Your ticket has been booked. Your PNR number is:</p>
+        <div class="pnr" id="pnrNum">NV-000000</div>
+        <p style="margin-bottom:16px">A confirmation has been sent to your email.</p>
+        <div class="success-btns">
+            <button class="btn-outline" onclick="window.location.href='/'">🏠 Home</button>
+            <button class="btn-filled" onclick="window.print()">🎫 Download Ticket</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    const params = new URLSearchParams(window.location.search);
+    const ride = params.get("ride") || "Volvo AC Sleeper";
+    document.getElementById("rideName").innerHTML = "🚌 " + ride + ' <span class="ai-badge">AI</span>';
+    document.getElementById("summaryRide").innerText = ride;
+
+    const today = new Date().toLocaleDateString('en-IN', { day:'numeric', month:'short', year:'numeric' });
+    document.getElementById("rideDate").innerText = today;
+
+    const base = Math.floor(Math.random() * 200) + 700;
+    const tax  = Math.floor(base * 0.09);
+    let discount = 0;
+    document.getElementById("summaryBase").innerText  = "₹" + base;
+    document.getElementById("summaryTax").innerText   = "₹" + tax;
+    document.getElementById("summaryTotal").innerText = "₹" + (base + tax);
+
+    const takenSeats = [3, 7, 11, 15, 20, 22];
+    let selectedSeat = null;
+    const grid = document.getElementById("seatGrid");
+    for (let i = 1; i <= 30; i++) {
+        const seat = document.createElement("div");
+        seat.className = "seat" + (takenSeats.includes(i) ? " taken" : "");
+        seat.innerText = i;
+        if (!takenSeats.includes(i)) seat.onclick = () => selectSeat(i, seat);
+        grid.appendChild(seat);
+    }
+
+    function selectSeat(num, el) {
+        document.querySelectorAll('.seat.selected').forEach(s => s.classList.remove('selected'));
+        el.classList.add('selected');
+        selectedSeat = num;
+        document.getElementById("summarySeat").innerText = "Seat " + num;
+    }
+
+    function applyPromo() {
+        const code = document.getElementById("promoInput").value.trim().toUpperCase();
+        if (code === "NAVIGO10") {
+            discount = Math.floor(base * 0.1);
+            document.getElementById("discountRow").style.display = "flex";
+            document.getElementById("summaryDiscount").innerText = "-₹" + discount;
+            document.getElementById("summaryTotal").innerText = "₹" + (base + tax - discount);
+            document.getElementById("promoInput").style.borderColor = "#4cd964";
+        } else {
+            document.getElementById("promoInput").style.borderColor = "#d84e55";
+            setTimeout(() => document.getElementById("promoInput").style.borderColor = "", 1500);
+        }
+    }
+
+    function formatCard(input) {
+        let val = input.value.replace(/\D/g, '').substring(0, 16);
+        input.value = val.replace(/(.{4})/g, '$1 ').trim();
+    }
+
+    function confirmBooking() {
+        const fn = document.getElementById("fname").value.trim();
+        const em = document.getElementById("email").value.trim();
+        const ph = document.getElementById("phone").value.trim();
+        if (!fn || !em || !ph) { alert("Please fill in all passenger details."); return; }
+        if (!selectedSeat)     { alert("Please select a seat."); return; }
+        const pnr = "NV-" + Math.floor(100000 + Math.random() * 900000);
+        document.getElementById("pnrNum").innerText = pnr;
+        document.getElementById("successOverlay").classList.add("show");
+    }
+
+    function toggleTheme() {
+        const html = document.documentElement;
+        const isDark = html.getAttribute("data-theme") === "dark";
+        html.setAttribute("data-theme", isDark ? "light" : "dark");
+        document.getElementById("themeBtn").innerText = isDark ? "🌙" : "☀️";
+        localStorage.setItem("navigo-theme", isDark ? "light" : "dark");
+    }
+    const saved = localStorage.getItem("navigo-theme");
+    if (saved === "dark") {
+        document.documentElement.setAttribute("data-theme", "dark");
+        document.getElementById("themeBtn").innerText = "☀️";
+    }
+</script>
+</body>
+</html>
