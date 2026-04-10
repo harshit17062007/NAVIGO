@@ -730,3 +730,77 @@
             <a href="#">Privacy Policy</a>
             <a href="#">Terms</a>
         </div>
+    </div>
+    <hr class="footer-divider">
+    <div class="footer-bottom">
+        <span>© 2026 NAVIGO. All rights reserved.</span>
+        <span>Built with ❤️ for smart transport</span>
+    </div>
+</footer>
+
+<script>
+    function price(base) { return base + Math.floor(Math.random() * 100); }
+    document.getElementById("p1").innerText = price(800);
+    document.getElementById("p2").innerText = price(400);
+    document.getElementById("p3").innerText = price(1400);
+    document.getElementById("p4").innerText = price(60);
+
+    const now = new Date();
+    document.getElementById("dateInput").value = now.toISOString().split("T")[0];
+    document.getElementById("timeInput").value = now.toTimeString().slice(0, 5);
+
+    function filterRides(type, el) {
+        document.querySelectorAll('.service').forEach(s => s.classList.remove('active'));
+        el.classList.add('active');
+        document.querySelectorAll('.ride-card').forEach(r => {
+            r.style.display = (type === 'all' || r.classList.contains(type)) ? "block" : "none";
+        });
+    }
+
+    function searchRides() {
+        const from = document.getElementById("fromInput").value.trim();
+        const to   = document.getElementById("toInput").value.trim();
+        if (!from || !to) {
+            showToast("⚠️  Please enter From and To locations.", 2500);
+            return;
+        }
+        document.getElementById("rides").scrollIntoView({ behavior: "smooth" });
+        showToast("🔍 Showing rides for " + from + " → " + to, 2500);
+    }
+
+    function bookRide(name) {
+        showToast("🎟️  Booking " + name + "...", 2000);
+        setTimeout(() => { window.location.href = "/book?ride=" + encodeURIComponent(name); }, 1200);
+    }
+
+    let toastTimer;
+    function showToast(msg, duration = 2500) {
+        const t = document.getElementById("toast");
+        const m = document.getElementById("toastMsg");
+        clearTimeout(toastTimer);
+        m.innerText = msg;
+        t.style.display = "flex";
+        t.classList.remove("hide");
+        toastTimer = setTimeout(() => {
+            t.classList.add("hide");
+            setTimeout(() => t.style.display = "none", 400);
+        }, duration);
+    }
+
+    function toggleTheme() {
+        const html = document.documentElement;
+        const isDark = html.getAttribute("data-theme") === "dark";
+        html.setAttribute("data-theme", isDark ? "light" : "dark");
+        document.getElementById("themeBtn").innerText = isDark ? "🌙" : "☀️";
+        localStorage.setItem("navigo-theme", isDark ? "light" : "dark");
+    }
+
+    const saved = localStorage.getItem("navigo-theme");
+    if (saved === "dark") {
+        document.documentElement.setAttribute("data-theme", "dark");
+        document.getElementById("themeBtn").innerText = "☀️";
+    }
+</script>
+
+</body>
+</html>
