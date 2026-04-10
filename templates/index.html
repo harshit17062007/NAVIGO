@@ -257,6 +257,63 @@
             margin-bottom: 10px;
         }
 
+        /* Women toggle */
+        .women-toggle-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: linear-gradient(90deg, rgba(248,87,166,0.08), rgba(216,78,85,0.06));
+            border: 1.5px solid rgba(248,87,166,0.25);
+            border-radius: 10px;
+            padding: 10px 14px;
+            margin-bottom: 14px;
+            transition: var(--transition);
+        }
+        .women-toggle-row:hover { border-color: #f857a6; }
+        .women-toggle-left {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .women-toggle-left span { font-size: 20px; }
+        .women-toggle-text strong {
+            display: block;
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text);
+        }
+        .women-toggle-text small {
+            font-size: 10px;
+            color: var(--text-muted);
+        }
+        .toggle-switch {
+            position: relative;
+            width: 40px;
+            height: 22px;
+            flex-shrink: 0;
+        }
+        .toggle-switch input { display: none; }
+        .toggle-slider {
+            position: absolute;
+            inset: 0;
+            background: var(--border);
+            border-radius: 20px;
+            transition: var(--transition);
+            cursor: pointer;
+        }
+        .toggle-slider::before {
+            content: "";
+            position: absolute;
+            width: 16px; height: 16px;
+            background: white;
+            border-radius: 50%;
+            top: 3px; left: 3px;
+            transition: var(--transition);
+            box-shadow: 0 1px 4px rgba(0,0,0,0.2);
+        }
+        .toggle-switch input:checked + .toggle-slider { background: #f857a6; }
+        .toggle-switch input:checked + .toggle-slider::before { transform: translateX(18px); }
+
         .search-btn {
             width: 100%;
             padding: 14px;
@@ -478,6 +535,80 @@
         }
         .stat-label { font-size: 11px; color: var(--text-muted); margin-top: 2px; }
 
+        /* FAQ Section */
+        .faq-section {
+            width: 92%;
+            max-width: 480px;
+            margin: 0 auto 32px;
+        }
+        .faq-tabs {
+            display: flex;
+            gap: 6px;
+            margin-bottom: 16px;
+            overflow-x: auto;
+            padding-bottom: 4px;
+        }
+        .faq-tab {
+            padding: 7px 16px;
+            border-radius: 30px;
+            border: 1.5px solid var(--border);
+            background: var(--surface);
+            color: var(--text-muted);
+            font-size: 11px;
+            font-weight: 500;
+            font-family: 'Poppins', sans-serif;
+            cursor: pointer;
+            white-space: nowrap;
+            transition: var(--transition);
+        }
+        .faq-tab.active, .faq-tab:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+            background: rgba(216,78,85,0.07);
+        }
+        .faq-item {
+            border: 1.5px solid var(--border);
+            border-radius: 12px;
+            margin-bottom: 8px;
+            overflow: hidden;
+            transition: var(--transition);
+        }
+        .faq-item.open { border-color: rgba(216,78,85,0.35); }
+        .faq-q {
+            padding: 14px 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 500;
+            background: var(--surface);
+            transition: var(--transition);
+            gap: 10px;
+        }
+        .faq-q:hover { color: var(--primary); }
+        .faq-chevron {
+            font-size: 12px;
+            color: var(--text-muted);
+            transition: transform 0.3s ease;
+            flex-shrink: 0;
+        }
+        .faq-item.open .faq-chevron { transform: rotate(180deg); color: var(--primary); }
+        .faq-a {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.35s ease, padding 0.3s ease;
+            font-size: 12px;
+            color: var(--text-muted);
+            line-height: 1.7;
+            background: var(--surface2);
+            padding: 0 16px;
+        }
+        .faq-item.open .faq-a {
+            max-height: 200px;
+            padding: 12px 16px;
+        }
+
         .toast {
             position: fixed;
             bottom: 30px;
@@ -588,6 +719,19 @@
         </div>
     </div>
     <br>
+    <div class="women-toggle-row">
+        <div class="women-toggle-left">
+            <span>👩</span>
+            <div class="women-toggle-text">
+                <strong>Booking for Women</strong>
+                <small>View women-preferred rides &amp; safety features</small>
+            </div>
+        </div>
+        <label class="toggle-switch">
+            <input type="checkbox" id="womenToggle" onchange="toggleWomen(this)">
+            <span class="toggle-slider"></span>
+        </label>
+    </div>
     <button class="search-btn" onclick="searchRides()">🔍 &nbsp; Search Rides</button>
 </div>
 
@@ -705,6 +849,89 @@
 
 </div>
 
+<!-- FAQ SECTION -->
+<div class="section-header fade-up delay-4">
+    <h2>FAQs on Booking</h2>
+    <span onclick="document.getElementById('faq').scrollIntoView({behavior:'smooth'})">View all →</span>
+</div>
+
+<div class="faq-section fade-up delay-4" id="faq">
+    <div class="faq-tabs">
+        <button class="faq-tab active" onclick="switchFaq('general', this)">General</button>
+        <button class="faq-tab" onclick="switchFaq('ticket', this)">Ticket-related</button>
+        <button class="faq-tab" onclick="switchFaq('payment', this)">Payment</button>
+        <button class="faq-tab" onclick="switchFaq('cancel', this)">Cancellation &amp; Refund</button>
+    </div>
+
+    <div id="faq-general">
+        <div class="faq-item">
+            <div class="faq-q" onclick="toggleFaq(this)">Can I track my booked bus/cab in real-time? <span class="faq-chevron">▼</span></div>
+            <div class="faq-a">Yes! NAVIGO provides live tracking for all booked rides. You can track your vehicle's location directly from the My Bookings section after your booking is confirmed.</div>
+        </div>
+        <div class="faq-item">
+            <div class="faq-q" onclick="toggleFaq(this)">What are the advantages of booking with NAVIGO? <span class="faq-chevron">▼</span></div>
+            <div class="faq-a">NAVIGO offers AI-powered demand prediction, real-time seat availability, instant digital tickets, 24/7 support, free cancellation on select rides, and exclusive deals for registered users.</div>
+        </div>
+        <div class="faq-item">
+            <div class="faq-q" onclick="toggleFaq(this)">Do I need an account to book a ride? <span class="faq-chevron">▼</span></div>
+            <div class="faq-a">You need to sign up for a free NAVIGO account to complete a booking. Signing up takes less than a minute and gives you access to booking history, e-tickets, and exclusive offers.</div>
+        </div>
+        <div class="faq-item">
+            <div class="faq-q" onclick="toggleFaq(this)">Does booking online cost extra? <span class="faq-chevron">▼</span></div>
+            <div class="faq-a">No extra charges for online booking! In fact, online bookings often come with exclusive NAVIGO discounts and early-bird pricing that aren't available at counters.</div>
+        </div>
+        <div class="faq-item">
+            <div class="faq-q" onclick="toggleFaq(this)">What is the "Booking for Women" feature? <span class="faq-chevron">▼</span></div>
+            <div class="faq-a">The Booking for Women toggle filters rides that prioritise women's safety — showing buses/cabs with verified women-friendly operators, dedicated seating, priority helpline access, and safety-rated services.</div>
+        </div>
+    </div>
+
+    <div id="faq-ticket" style="display:none">
+        <div class="faq-item">
+            <div class="faq-q" onclick="toggleFaq(this)">Where can I find my ticket after booking? <span class="faq-chevron">▼</span></div>
+            <div class="faq-a">Your e-ticket is available in My Bookings immediately after payment. It's also sent to your registered email and can be downloaded as a PDF anytime.</div>
+        </div>
+        <div class="faq-item">
+            <div class="faq-q" onclick="toggleFaq(this)">Can I change my seat after booking? <span class="faq-chevron">▼</span></div>
+            <div class="faq-a">Seat changes are allowed up to 4 hours before departure, subject to availability. Go to My Bookings → Manage → Change Seat to make the modification.</div>
+        </div>
+        <div class="faq-item">
+            <div class="faq-q" onclick="toggleFaq(this)">Is a printed ticket required for travel? <span class="faq-chevron">▼</span></div>
+            <div class="faq-a">No, a digital e-ticket shown on your phone is fully accepted by all operators on NAVIGO. Simply show the QR code at boarding.</div>
+        </div>
+    </div>
+
+    <div id="faq-payment" style="display:none">
+        <div class="faq-item">
+            <div class="faq-q" onclick="toggleFaq(this)">What payment methods are accepted? <span class="faq-chevron">▼</span></div>
+            <div class="faq-a">NAVIGO accepts UPI, credit/debit cards, net banking, and popular wallets like Paytm and PhonePe. All transactions are secured with 256-bit SSL encryption.</div>
+        </div>
+        <div class="faq-item">
+            <div class="faq-q" onclick="toggleFaq(this)">How do I apply a discount or coupon code? <span class="faq-chevron">▼</span></div>
+            <div class="faq-a">Enter your coupon code at checkout on the payment page. Valid codes are automatically applied and the discount is reflected in your final payable amount.</div>
+        </div>
+        <div class="faq-item">
+            <div class="faq-q" onclick="toggleFaq(this)">Is my payment information stored securely? <span class="faq-chevron">▼</span></div>
+            <div class="faq-a">NAVIGO never stores your card details. All payment processing is handled by PCI-DSS compliant payment gateways. Your financial data is always safe.</div>
+        </div>
+    </div>
+
+    <div id="faq-cancel" style="display:none">
+        <div class="faq-item">
+            <div class="faq-q" onclick="toggleFaq(this)">How do I cancel my booking? <span class="faq-chevron">▼</span></div>
+            <div class="faq-a">Go to My Bookings, select the booking you want to cancel, and tap "Cancel Booking." Cancellations made more than 4 hours before departure receive a full or partial refund based on the operator's policy.</div>
+        </div>
+        <div class="faq-item">
+            <div class="faq-q" onclick="toggleFaq(this)">How long does a refund take? <span class="faq-chevron">▼</span></div>
+            <div class="faq-a">Refunds are typically processed within 5–7 business days to your original payment method. UPI and wallet refunds may arrive within 24 hours.</div>
+        </div>
+        <div class="faq-item">
+            <div class="faq-q" onclick="toggleFaq(this)">What if the operator cancels my ride? <span class="faq-chevron">▼</span></div>
+            <div class="faq-a">If your ride is cancelled by the operator, you receive a full automatic refund within 24 hours. NAVIGO will also proactively offer you alternate ride options for the same route and date.</div>
+        </div>
+    </div>
+</div>
+
 <div class="toast" id="toast" style="display:none">
     <span class="toast-icon">✅</span>
     <span id="toastMsg">Redirecting to booking...</span>
@@ -771,6 +998,30 @@
     function bookRide(name) {
         showToast("🎟️  Booking " + name + "...", 2000);
         setTimeout(() => { window.location.href = "/book?ride=" + encodeURIComponent(name); }, 1200);
+    }
+
+    function toggleWomen(cb) {
+        if (cb.checked) {
+            showToast("👩 Women-preferred rides enabled!", 2000);
+        } else {
+            showToast("Women filter removed.", 1500);
+        }
+    }
+
+    function switchFaq(tab, el) {
+        ['general','ticket','payment','cancel'].forEach(t => {
+            document.getElementById('faq-' + t).style.display = 'none';
+        });
+        document.querySelectorAll('.faq-tab').forEach(b => b.classList.remove('active'));
+        document.getElementById('faq-' + tab).style.display = 'block';
+        el.classList.add('active');
+    }
+
+    function toggleFaq(qEl) {
+        const item = qEl.closest('.faq-item');
+        const isOpen = item.classList.contains('open');
+        qEl.closest('[id^="faq-"]').querySelectorAll('.faq-item').forEach(i => i.classList.remove('open'));
+        if (!isOpen) item.classList.add('open');
     }
 
     let toastTimer;
